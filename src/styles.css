@@ -2,3 +2,35 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.toolbar-style {
+    color: rgb(255, 129, 1);
+}
+.placeholder {
+    flex: 1 1 auto;
+}
+.toolbar-link {
+    vertical-align: middle;
+    align-self: middle;
+}
+.toolbar-img {
+    max-width: 100%;
+    max-height: 100%;
+    vertical-align: middle;
+    align-self: middle;
+}
+.toolbar-appname {
+    padding-left: 5px;
+    max-width: 100%;
+    max-height: 100%;
+    vertical-align: middle;
+    color: rgb(255, 129, 1);
+}
+.toolbar-button {
+    border: none;
+    background: none;
+    vertical-align: middle;
+    align-self: middle;
+}
+.toolbar-button:hover {
+    background: rgb(255, 129, 1);
+}
