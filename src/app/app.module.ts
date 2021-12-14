@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { Constants } from './global/constants';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
@@ -22,9 +23,12 @@ import {MatListModule} from '@angular/material/list';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatTableModule} from '@angular/material/table';
+import {MatInputModule } from '@angular/material/input';
 
 
-
+// community mashup
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import { CommunityMashupService } from 'src/app/communitymashup/communitymashup.service'
 
 
 
@@ -55,9 +59,11 @@ import {MatTableModule} from '@angular/material/table';
     MatListModule,
     MatMenuModule,
     MatFormFieldModule,
-    MatTableModule
+    MatTableModule,
+    MatInputModule,
+    // mashup
   ],
   providers: [],
-  bootstrap: [AppComponent,AppNavigationBar,DataparserService,]
+  bootstrap: [AppComponent,AppNavigationBar,DataparserService,CommunityMashupService]
 })
 export class AppModule {}

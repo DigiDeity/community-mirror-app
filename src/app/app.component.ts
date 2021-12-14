@@ -8,11 +8,8 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 })
 export class AppComponent implements OnInit {
   title = 'community-mirror-app';
-  name: string;
-
   
-  constructor(private route: ActivatedRoute) {
-    this.name ="";   }
-
+  constructor(private route: ActivatedRoute, private router: Router) {
+  }
   ngOnInit() {};  
 }

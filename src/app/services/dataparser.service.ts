@@ -1,37 +1,30 @@
-import { Component, } from '@angular/core';
+import { Component, OnInit, } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {interval, Subscription} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
+import { CommunityMirrorObject } from '../obejcts/community.mirror.object';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Constants } from '../global/constants';
+import { CommunityMashupService } from 'src/app/communitymashup/communitymashup.service'
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
+const MASHUP_DATA: CommunityMirrorObject[] = [
+  {name: "Test1", value: 5, id: 1},
+  {name: "Test2", value: 7, id: 2},
+  {name: "Test3", value: 9, id: 3},
+  {name: "Test4", value: 11, id: 4},
+]
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
-  {position: 2, name: 'Helium', weight: 4.0026, symbol: 'He'},
-  {position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li'},
-  {position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be'},
-  {position: 5, name: 'Boron', weight: 10.811, symbol: 'B'},
-  {position: 6, name: 'Carbon', weight: 12.0107, symbol: 'C'},
-  {position: 7, name: 'Nitrogen', weight: 14.0067, symbol: 'N'},
-  {position: 8, name: 'Oxygen', weight: 15.9994, symbol: 'O'},
-  {position: 9, name: 'Fluorine', weight: 18.9984, symbol: 'F'},
-  {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
-];
 
 @Component({
   selector: 'app-dataparser',
   templateUrl: './dataparser.services.html',
   styleUrls: ['./dataparser.services.css']
 })
-export class DataparserService{
 
-  displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  dataSource = new MatTableDataSource(ELEMENT_DATA);
+export class DataparserService implements OnInit{
+
+  displayedColumns: string[] = ['name', 'value', 'id'];
+  dataSource = new MatTableDataSource(MASHUP_DATA);
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -43,17 +36,34 @@ export class DataparserService{
   dataServiceProcessed: boolean = false;
   dataServiceCounter = 0;
   dataXML: string[] = [];
-  
+  paramsObject: any;
+  deviceID: string = "";
+  articleID: string ="";
 
 
-  constructor(private http: HttpClient) {        
+  constructor(private route: ActivatedRoute, public communitymashup: CommunityMashupService){        
     // mine
     this.mySubscription= interval(10).subscribe((x =>{
       this.increaseCounter();
     }));
+    this.route.queryParamMap
+      .subscribe((params) => {
+        this.paramsObject = { ...params.keys, ...params };
+        this.articleID = this.paramsObject.params.articleid;
+        this.deviceID= this.paramsObject.params.cmid;
+      }
+    );
+    
   }
 
-  //mine
+  ngOnInit(): void {
+    if (this.articleID != Constants.deviceID) {
+      this.dataSource.filter = (<HTMLInputElement>document.getElementById("fitlerinput")).value.trim().toLowerCase();
+    }
+    this.communitymashup.loadFromUrl();
+    console.log(this.communitymashup.getMetaTags());
+  }
+
   increaseCounter(){
     this.dataServiceCounter = this.dataServiceCounter + 1;
     if (this.dataServiceCounter > 100) {
@@ -61,6 +71,7 @@ export class DataparserService{
       this.dataServiceProcessed = true;
       this.mySubscription.unsubscribe();
     }
-    console.log("Progressbar Value: " + this.dataServiceCounter)
   }
+
+  getMetaTags() { return this.communitymashup.getMetaTags(); }
 }

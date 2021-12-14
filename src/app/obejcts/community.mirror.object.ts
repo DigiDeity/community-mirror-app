@@ -1,4 +1,5 @@
 export interface CommunityMirrorObject {
     name: string,
-    value: number
+    value: number,
+    id: number
 }

@@ -2,7 +2,8 @@
     <mat-toolbar class="toolbar-style">
       <a class="toolbar-link" href="" style="text-decoration: none">
         <img class="toolbar-img" src="./assets/communitymirrors-logo.png"/>
-        <span class="toolbar-appname">Community Mirror</span>
+        <span class="toolbar-appname">{{appTitle}}</span>
+        <span class="toolbar-deviceid">({{deviceID}})</span>
       </a>
       <span class="placeholder"></span>
       <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
