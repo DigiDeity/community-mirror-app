@@ -3,7 +3,7 @@ import { CommunityMashupService } from './../communitymashup.service';
 
 export class Extension extends Item {
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: Item, public override service: CommunityMashupService) {
     super(item, service);
   }
 

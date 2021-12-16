@@ -3,7 +3,7 @@ import { CommunityMashupService } from './../communitymashup.service';
 
 export class Category extends Classification {
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: Classification, public override service: CommunityMashupService) {
     super(item, service);
   }
 

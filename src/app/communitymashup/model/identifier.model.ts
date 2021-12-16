@@ -7,7 +7,7 @@ export class Identifier extends Item {
   key: string;
   value: string;
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
     // attributes
     this.key = item['key'];

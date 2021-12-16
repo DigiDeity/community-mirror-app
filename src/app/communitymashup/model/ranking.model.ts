@@ -1,11 +1,11 @@
 import { Extension } from './extension.model';
-import { CommunityMashupService } from './communitymashup.service';
+import { CommunityMashupService } from './../communitymashup.service';
 
 export class Ranking extends Extension {
 
   // TBD: date
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
   }
 

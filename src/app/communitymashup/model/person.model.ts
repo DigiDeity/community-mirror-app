@@ -13,7 +13,7 @@ export class Person extends InformationObject {
   // additional references
   // leaderOf:Org, authored:Content, contributed:Content, persons:Person, ranked:Ranking
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
     // attributes
     this.title = item['title'];
@@ -22,22 +22,22 @@ export class Person extends InformationObject {
     this.dateOfBirth = item['dateOfBirth'];
   }
 
-  getLeaderOf(): Organisation {
+  getLeaderOf(): Organisation | null{
     // TBD
     return null;
   }
 
-  getAuthored(): Content[] {
+  getAuthored(): Content[] | null{
     // TBD
     return null;
   }
 
-  getContributed(): Content[] {
+  getContributed(): Content[] | null{
     // TBD
     return null;
   }
 
-  getPersons(): Person[] {
+  getPersons(): Person[] | null{
     // TBD
     return null;
   }

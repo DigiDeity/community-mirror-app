@@ -8,11 +8,11 @@ export class Organisation extends InformationObject {
   // additional references
   // leader:Person, parentOrganisation:Organisation, participants:Person, organizations:Organisation
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
   }
 
-  getLeader(): Person {
+  getLeader(): Person | null{
     // TBD
     return null;
   }

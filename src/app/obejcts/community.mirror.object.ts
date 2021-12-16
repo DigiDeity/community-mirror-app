@@ -1,5 +1,5 @@
 export interface CommunityMirrorObject {
-    name: string,
-    value: number,
-    id: number
+    ident: string,
+    title: string,
+    content: string,
 }

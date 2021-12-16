@@ -8,14 +8,14 @@ export class MetaTag extends Item {
   // references
   metaTaggedItemIds: string[] = [];
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
     // attributes
     this.name = item['name'];
     // reference metaTagged
     var tmps = item['metaTagged'];
     var tmpsArr = tmps.split(" ");
-    tmpsArr.forEach(id => this.metaTaggedItemIds.push(id));
+    tmpsArr.forEach((id: string)=> this.metaTaggedItemIds.push(id));
   }
 
   getMetaTaggedItems(): Item[] {

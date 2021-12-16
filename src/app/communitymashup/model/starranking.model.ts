@@ -1,11 +1,11 @@
 import { Ranking } from './ranking.model';
-import { CommunityMashupService } from './communitymashup.service';
+import { CommunityMashupService } from './../communitymashup.service';
 
 export class StarRanking extends Ranking {
 
   // TBD: normalizedValue
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
   }
 

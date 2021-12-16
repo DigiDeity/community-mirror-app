@@ -7,7 +7,7 @@ export class Connection extends Item {
   fromId: string;
   toId: string;
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
     // attributes
     this.fromId = item['from'];

@@ -8,7 +8,7 @@ export class Content extends InformationObject {
   // additional references
   // contents:Content, contributors:Person, author:Person, documents:Document, parentContent:Content, videos:Video
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
     // attributes
     this.locale = item['locale'];

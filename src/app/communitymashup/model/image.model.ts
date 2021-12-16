@@ -7,7 +7,7 @@ export class Image extends Attachment {
   width: number;
   height: number;
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
     // attributes
     this.width = item['width'];

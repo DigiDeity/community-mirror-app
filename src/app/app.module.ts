@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core';
-import { Constants } from './global/constants';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
@@ -10,6 +9,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
 import { HttpClientModule } from '@angular/common/http';
 import { DataparserService } from './services/dataparser.service'
+
+import { ToolbarComponent } from './components//toolbar/toolbar.component';
+import { ItemtableComponent } from './components/itemtable/itemtable.component'
 
 // Angular Material Imports
 import { MatToolbarModule } from '@angular/material/toolbar'; 
@@ -24,11 +26,9 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatTableModule} from '@angular/material/table';
 import {MatInputModule } from '@angular/material/input';
-
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 // community mashup
-import {HTTP_INTERCEPTORS} from '@angular/common/http';
-import { CommunityMashupService } from 'src/app/communitymashup/communitymashup.service'
 
 
 
@@ -40,6 +40,8 @@ import { CommunityMashupService } from 'src/app/communitymashup/communitymashup.
     AppComponent,
     AppNavigationBar,
     DataparserService,
+    ToolbarComponent,
+    ItemtableComponent,
   ],
   imports: [
     BrowserModule,
@@ -61,9 +63,10 @@ import { CommunityMashupService } from 'src/app/communitymashup/communitymashup.
     MatFormFieldModule,
     MatTableModule,
     MatInputModule,
+    MatPaginatorModule,
     // mashup
   ],
-  providers: [],
-  bootstrap: [AppComponent,AppNavigationBar,DataparserService,CommunityMashupService]
+  providers: [MatPaginatorModule],
+  bootstrap: [AppComponent,AppNavigationBar,DataparserService]
 })
 export class AppModule {}

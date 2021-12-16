@@ -31,11 +31,11 @@ export class CommunityMashupService {
 
   constructor(private http: HttpClient) { }
 
-  getPersons(metaTagString:string): Person[] {
+  getPersons(metaTagString:string): Person[] | null{
     if (metaTagString == null) {
       return this.itemTypeMap.get('data:Person');
     }
-    var metaTag: MetaTag = this.getMetaTag(metaTagString);
+    var metaTag = this.getMetaTag(metaTagString);
     if (metaTag == null) { return null; console.log("metatag "+metaTagString+" not known"); }
     // iterate through items metatagged with requested metatag and filter person items
     var itemArr: Item[] = metaTag.getMetaTaggedItems();
@@ -48,7 +48,7 @@ export class CommunityMashupService {
     if (metaTagString == null) {
       return this.itemTypeMap.get('data:Content');
     }
-    var metaTag: MetaTag = this.getMetaTag(metaTagString);
+    var metaTag = this.getMetaTag(metaTagString);
     if (metaTag == null) { return null; console.log("metatag "+metaTagString+" not known"); }
     // iterate through items metatagged with requested metatag and filter content items
     var itemArr = metaTag.getMetaTaggedItems();
@@ -61,7 +61,7 @@ export class CommunityMashupService {
     if (metaTagString == null) {
       return this.itemTypeMap.get('data:Organisation');
     }
-    var metaTag: MetaTag = this.getMetaTag(metaTagString);
+    var metaTag = this.getMetaTag(metaTagString);
     if (metaTag == null) { return null; console.log("metatag "+metaTagString+" not known"); }
     // iterate through items metatagged with requested metatag and filter organisation items
     var itemArr = metaTag.getMetaTaggedItems();
@@ -74,10 +74,10 @@ export class CommunityMashupService {
     return this.itemTypeMap.get('data:MetaTag');
   }
 
-  getMetaTag(metaTagString:string): MetaTag {
+  getMetaTag(metaTagString:string): MetaTag | null {
     let metaTags:MetaTag[] = this.getMetaTags();
     if (metaTags == null) { return null; }
-    var result:MetaTag = null;
+    var result = null;
     metaTags.forEach(metaTag => { if (metaTag.name == metaTagString) { result = metaTag; }} );
     return result;
   }
@@ -117,13 +117,14 @@ export class CommunityMashupService {
       .toPromise()
       .then(data => {
         console.log('Loading dataset from ' + url);
+        if(data) {
         parseString(data, function(err, result) {
           self.created = result['data:DataSet']['$']['created'];
           self.lastModified = result['data:DataSet']['$']['lastModified'];
           self.items = result['data:DataSet']['items'];
           console.log('Finished loading dataset - size=' + self.items.length);
           self.initializeDataSet();
-        })
+        })}
         return data;
       });
 
@@ -137,7 +138,7 @@ export class CommunityMashupService {
   initializeDataSet() {
     // check if DataSet is already initialized ...
     if (this.itemIdMap.size > 0) {
-      console.warn("initializeDataSet called with {{this.itemIdMap.size}} elements already stored");
+      console.warn("initializeDataSet called with ${{this.itemIdMap.size}} elements already stored");
       return;
     }
     // iterate through the items and create correct classes and indexes
@@ -183,6 +184,11 @@ export class CommunityMashupService {
       }
       typeArr.push(item);
     }
+  }
+
+  getItems(): Array<Item> {
+    //console.log(this.items)
+    return this.items;
   }
 
 }

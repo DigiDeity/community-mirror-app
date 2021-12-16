@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { CommunityMashupService } from './communitymashup/communitymashup.service';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,11 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 export class AppComponent implements OnInit {
   title = 'community-mirror-app';
   
-  constructor(private route: ActivatedRoute, private router: Router) {
+  constructor(private route: ActivatedRoute, public communitymashup: CommunityMashupService) {
   }
-  ngOnInit() {};  
+  ngOnInit() {
+    this.communitymashup.loadFromUrl()
+    console.log("CommunityMashup Items: " + this.communitymashup.items);
+  };  
+
 }

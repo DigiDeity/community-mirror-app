@@ -1,5 +1,5 @@
 import { Metainformation } from './metainformation.model';
-import { CommunityMashupService } from './communitymashup.service';
+import { CommunityMashupService } from './../communitymashup.service';
 
 export class WebSite extends Metainformation {
 
@@ -8,7 +8,7 @@ export class WebSite extends Metainformation {
   title: string;
   shortenedUrl: string;
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
     // attributes
     this.address = item['address'];

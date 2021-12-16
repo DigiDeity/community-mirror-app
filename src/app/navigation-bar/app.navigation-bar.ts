@@ -10,16 +10,16 @@ import { ActivatedRoute} from '@angular/router';
 })
 export class AppNavigationBar {
   paramsObject: any;
-  deviceID: string = Constants.deviceID;
-  articleID: number = Constants.articleID;
+  communityMirrorID: string = Constants.communityMirrorId;
+  ident: string = Constants.ident;
   appTitle: string = Constants.appTitle;
   
   constructor(private route: ActivatedRoute){        
     this.route.queryParamMap
       .subscribe((params) => {
         this.paramsObject = { ...params.keys, ...params };
-        this.articleID = this.paramsObject.params.articleid;
-        this.deviceID= this.paramsObject.params.cmid;
+        this.ident = this.paramsObject.params.articleid;
+        this.communityMirrorID= this.paramsObject.params.cmid;
       }
     );
     

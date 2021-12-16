@@ -1,67 +1,83 @@
-import { Component, OnInit, } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import {interval, Subscription} from 'rxjs';
-import {MatTableDataSource} from '@angular/material/table';
+import { Component, OnInit, ViewChild, AfterViewInit  } from '@angular/core';
+import {MatTable, MatTableDataSource} from '@angular/material/table';
 import { CommunityMirrorObject } from '../obejcts/community.mirror.object';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import {  ActivatedRoute,  } from '@angular/router';
 import { Constants } from '../global/constants';
 import { CommunityMashupService } from 'src/app/communitymashup/communitymashup.service'
-
-const MASHUP_DATA: CommunityMirrorObject[] = [
-  {name: "Test1", value: 5, id: 1},
-  {name: "Test2", value: 7, id: 2},
-  {name: "Test3", value: 9, id: 3},
-  {name: "Test4", value: 11, id: 4},
-]
-
+import {animate, state, style, transition, trigger} from '@angular/animations';
+import {MatPaginator} from '@angular/material/paginator';
+import {MatPaginatorModule} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-dataparser',
   templateUrl: './dataparser.services.html',
-  styleUrls: ['./dataparser.services.css']
+  styleUrls: ['./dataparser.services.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 
-export class DataparserService implements OnInit{
+export class DataparserService implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['name', 'value', 'id'];
-  dataSource = new MatTableDataSource(MASHUP_DATA);
+  @ViewChild(MatPaginator) private paginator!: MatPaginator;
+  @ViewChild(MatTable) table!: MatTable<any>;
+
+
+  // my data
+  parsedData: CommunityMirrorObject[] = [{ident: "a_1", title: "Example entry 1", content: "Example Content 1"}];
+  // table variables
+  displayedColumns: string[] = ['ident', 'title', 'content'];
+  dataSource = new MatTableDataSource(this.parsedData);
+  expandedElement: CommunityMirrorObject | null;
+
+  
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
   }
 
   // mine
-  mySubscription: Subscription
   dataServiceProcessed: boolean = false;
   dataServiceCounter = 0;
-  dataXML: string[] = [];
   paramsObject: any;
-  deviceID: string = "";
-  articleID: string ="";
+  communityMirrorID: string = "";
+  ident: string ="";
 
+  
 
   constructor(private route: ActivatedRoute, public communitymashup: CommunityMashupService){        
-    // mine
-    this.mySubscription= interval(10).subscribe((x =>{
-      this.increaseCounter();
-    }));
+    // table
+    this.expandedElement = null;
+    //this.dataSource.paginator = this.paginator;
+
     this.route.queryParamMap
       .subscribe((params) => {
         this.paramsObject = { ...params.keys, ...params };
-        this.articleID = this.paramsObject.params.articleid;
-        this.deviceID= this.paramsObject.params.cmid;
+        this.ident = this.paramsObject.params.articleid;
+        this.communityMirrorID= this.paramsObject.params.cmid;
       }
     );
-    
+    this.parseMashupData();
   }
 
   ngOnInit(): void {
-    if (this.articleID != Constants.deviceID) {
-      this.dataSource.filter = (<HTMLInputElement>document.getElementById("fitlerinput")).value.trim().toLowerCase();
-    }
-    this.communitymashup.loadFromUrl();
-    console.log(this.communitymashup.getMetaTags());
+    if (this.ident != Constants.ident) {
+      //this.dataSource.filter = (<HTMLInputElement>document.getElementById("fitlerinput")).value.trim().toLowerCase();
+    }  
+    
   }
 
   increaseCounter(){
@@ -69,9 +85,30 @@ export class DataparserService implements OnInit{
     if (this.dataServiceCounter > 100) {
       this.dataServiceCounter = 0;
       this.dataServiceProcessed = true;
-      this.mySubscription.unsubscribe();
+      //this.mySubscription.unsubscribe();
+      //console.log(this.communitymashup.items);
+      
     }
   }
 
-  getMetaTags() { return this.communitymashup.getMetaTags(); }
+  addRow(){
+    this.dataSource.data.push({ident: "a_" + Math.random(), title: "-" + Math.random, content: "Content:" + Math.random})
+    this.dataSource.paginator = this.paginator;
+    this.table.renderRows();
+  }
+
+  parseMashupData(){
+    var i = 0.0;
+    this.communitymashup.itemIdMap.forEach(element => {
+      //this.parsedData.push({ident: element.ident, title: "-", content: element.stringValue});
+      this.dataSource.data.push({ident: element.ident, title: "-", content: element.stringValue});
+      this.dataSource.paginator = this.paginator;
+      this.table.renderRows();
+      this.dataServiceCounter = Math.round(this.dataSource.data.length/this.communitymashup.itemIdMap.size*100)
+    });
+    console.log(this.parsedData)
+    //this.dataSource = new MatTableDataSource(this.parsedData); 
+
+  }
+
 }

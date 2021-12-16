@@ -4,7 +4,7 @@ import { CommunityMashupService } from './../communitymashup.service';
 export class Item {
 
   // reference to service
-  communitymashupservice: CommunityMashupService = null;
+  communitymashupservice: CommunityMashupService;
 
   // attributes
   ident: string;
@@ -18,7 +18,7 @@ export class Item {
   metaTags: string[] = [];
 
   // initialize attributes and relations from attribute value pairs in parameter object
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: Item, public service: CommunityMashupService) {
     this.communitymashupservice = service;
     // attributes
     this.ident = item['ident'];
@@ -29,20 +29,20 @@ export class Item {
     // reference connectedTo
     var tmps = item['connectedTo'];
     if(tmps) {
-      var tmpsArr = tmps.split(" ");
-      tmpsArr.forEach(id => this.connectedTo.push(id));
+      var tmpsArr = (tmps as unknown as string).split(" ");
+      tmpsArr.forEach((id: string) => this.connectedTo.push(id));
     }
     // reference identifiedBy
     tmps = item['identifiedBy'];
     if(tmps) {
-      var tmpsArr = tmps.split(" ");
-      tmpsArr.forEach(id => this.identifiedBy.push(id));
+      var tmpsArr = (tmps as unknown as string).split(" ");
+      tmpsArr.forEach((id: string) => this.identifiedBy.push(id));
     }
     // reference metaTags
     tmps = item['metaTags'];
     if(tmps) {
-      var tmpsArr = tmps.split(" ");
-      tmpsArr.forEach(id => this.metaTags.push(id));
+      var tmpsArr = (tmps as unknown as string).split(" ");
+      tmpsArr.forEach((id: string) => this.metaTags.push(id));
     }
   }
 

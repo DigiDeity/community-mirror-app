@@ -17,44 +17,44 @@ export class InformationObject extends Item {
   thumbRankings: string[] = [];
   viewRankings: string[] = [];
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
     // attributes
     this.name = item['name'];
     var tmps = item['alternativeNames'];
     if(tmps) {
       var tmpsArr = tmps.split(",");
-      tmpsArr.forEach(aName => this.alternativeNames.push(aName));
+      tmpsArr.forEach((aName: string) => this.alternativeNames.push(aName));
     }
     // reference metaInformations
     tmps = item['metaInformations'];
     if(tmps) {
       var tmpsArr = tmps.split(" ");
-      tmpsArr.forEach(id => this.metaInformations.push(id));
+      tmpsArr.forEach((id: string) => this.metaInformations.push(id));
     }
     // reference categories
     tmps = item['categories'];
     if(tmps) {
       tmpsArr = tmps.split(" ");
-      tmpsArr.forEach(id => this.categories.push(id));
+      tmpsArr.forEach((id: string) => this.categories.push(id));
     }
     // reference tags
     tmps = item['tags'];
     if(tmps) {
       tmpsArr = tmps.split(" ");
-      tmpsArr.forEach(id => this.tags.push(id));
+      tmpsArr.forEach((id: string) => this.tags.push(id));
     }
     // reference images
     tmps = item['images'];
     if(tmps) {
       tmpsArr = tmps.split(" ");
-      tmpsArr.forEach(id => this.images.push(id));
+      tmpsArr.forEach((id: string) => this.images.push(id));
     }
     // reference binaries
     tmps = item['binaries'];
     if(tmps) {
       tmpsArr = tmps.split(" ");
-      tmpsArr.forEach(id => this.binaries.push(id));
+      tmpsArr.forEach((id: string) => this.binaries.push(id));
     }
     // TBD: Rankings
   }
@@ -78,7 +78,7 @@ export class InformationObject extends Item {
 
   // get all items connected to this information object
   // (either directly or via connectedTo)
-  getConnectedItems() : Item[] {
+  override getConnectedItems() : Item[] {
     return super.getConnectedItems();
   }
 

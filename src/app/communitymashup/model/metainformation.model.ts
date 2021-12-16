@@ -3,7 +3,7 @@ import { CommunityMashupService } from './../communitymashup.service';
 
 export class Metainformation extends Extension {
 
-  constructor(item, public service: CommunityMashupService) {
+  constructor(item: any, public override service: CommunityMashupService) {
     super(item, service);
   }
 
