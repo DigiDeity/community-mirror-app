@@ -1,1 +1,149 @@
-<p>itemtable works!</p>
+<div class="progress-bar-centered"> 
+    <mat-progress-bar *ngIf="dataServiceProcessed == true" mode="determinate" value="{{dataServiceCounter}}"></mat-progress-bar>
+    <mat-progress-bar *ngIf="dataServiceProcessed == false" mode="indeterminate" value="{{dataServiceCounter}}"></mat-progress-bar>
+</div>
+<div class="app-container"> 
+    <mat-form-field class="search-filter" appearance="legacy">
+        <mat-label>Search</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Examlpe input" #input width="100%" value={{ident}} id="filterinput">
+        <mat-icon matSuffix (click)="applyFilterIcon()">search</mat-icon>
+        <!-- <mat-hint>Search for Community Mirror items</mat-hint> -->
+    </mat-form-field>
+    <mat-tab-group (selectedTabChange)="tabClick()" mat-align-tabs="center" >
+        <!-- Tab for Peron Items -->
+        <mat-tab label="Persons"> 
+            <table mat-table
+                [dataSource]="dataSourcePersons" multiTemplateDataRows
+                class="mat-elevation-z8">
+                <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumnsPerson">
+                    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                    <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+                </ng-container>
+
+                <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+                <ng-container matColumnDef="expandedDetail">
+                    <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsPerson.length">
+                        <div class="example-element-detail"
+                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                        
+                            <div class="container">
+                                <span> Date of Birth: {{element.dateOfBirth}}</span>
+                                <tr></tr>
+                                <span *ngFor="let ref of element.alternativeNames">Alternative Names: {{ref}}</span>
+                                <tr></tr>
+                                <span *ngFor="let ref of element.connectedTo">Connected to: {{ref}}</span>
+                                <tr></tr>
+                                <span> URI: {{element.uri}}</span>
+                                <tr></tr>
+                                <span> String Value: {{element.stringValue}} </span>
+                                <tr></tr>
+                                <span> Created: {{element.created}} </span>
+                                <tr></tr>
+                                <span> Last Modified: {{element.lastModified}} </span>
+                                <tr></tr>
+                                <span *ngFor="let ref of element.connectedTo">Connected to: {{ref}}</span>
+                                <tr></tr>
+                                <span *ngFor="let ref of element.identifierdBy">identifiedBy: {{ref}}</span>
+                                <tr></tr>
+                                <span *ngFor="let ref of element.metaTags">metaTags: {{ref}}</span>
+                                <tr class ="example-fill-remaining-space"></tr>
+                                <button class="itemtable-download-button" (click)="parseMashupData()"  mat-mini-fab color="warn" aria-label="Example icon button with a menu icon">
+                                    <mat-icon>arrow_right</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsPerson"></tr>
+                <tr mat-row *matRowDef="let element; columns: displayedColumnsPerson;"
+                    class="example-element-row"
+                    [class.example-expanded-row]="expandedElement === element"
+                    (click)="expandedElement = expandedElement === element ? null : element">
+                </tr>
+                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+                
+            </table>
+        </mat-tab>
+        <!-- Tab for Organisation Items -->
+        <mat-tab label="Organisations"> 
+            <table mat-table
+                [dataSource]="dataSourceOrganisations" multiTemplateDataRows
+                class="mat-elevation-z8">
+                <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumnsOrg">
+                    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                    <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+                </ng-container>
+
+                <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+                <ng-container matColumnDef="expandedDetail">
+                    <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsOrg.length">
+                        <div class="example-element-detail"
+                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                        
+                            <div class="container">
+                                <span class ="example-fill-remaining-space"> {{element.stringValue}} </span>
+                                <button class ="example-fill-remaining-space" (click)="parseMashupData()"  mat-mini-fab color="warn" aria-label="Example icon button with a menu icon">
+                                    <mat-icon>arrow_right</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsOrg"></tr>
+                <tr mat-row *matRowDef="let element; columns: displayedColumnsOrg;"
+                    class="example-element-row"
+                    [class.example-expanded-row]="expandedElement === element"
+                    (click)="expandedElement = expandedElement === element ? null : element">
+                </tr>
+                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+                
+            </table>
+            
+        </mat-tab>
+        <!-- Tab for All Items -->
+        <mat-tab label="All">
+            <table mat-table
+                [dataSource]="dataSource" multiTemplateDataRows
+                class="mat-elevation-z8">
+                <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumnsAll">
+                    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                    <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+                </ng-container>
+
+                <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+                <ng-container matColumnDef="expandedDetail">
+                    <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsAll.length">
+                        <div class="example-element-detail"
+                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                        
+                            <div class="container">
+                                <span> URI: {{element.uri}} </span>
+                                <span> String Value: {{element.stringValue}} </span>
+                                <span> Created: {{element.created}} </span>
+                                <span> Last Modified: {{element.lastModified}} </span>
+                                <span *ngFor="let ref of element.connectedTo">Connected to: {{ref}}</span>
+                                <span *ngFor="let ref of element.identifierdBy">identifiedBy: {{ref}}</span>
+                                <span *ngFor="let ref of element.metaTags">metaTags: {{ref}}</span>
+                                <button class ="example-fill-remaining-space" (click)="parseMashupData()"  mat-mini-fab color="warn" aria-label="Example icon button with a menu icon">
+                                    <mat-icon>arrow_right</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsAll"></tr>
+                <tr mat-row *matRowDef="let element; columns: displayedColumnsAll;"
+                    class="example-element-row"
+                    [class.example-expanded-row]="expandedElement === element"
+                    (click)="expandedElement = expandedElement === element ? null : element">
+                </tr>
+                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+                
+            </table>
+        </mat-tab>
+    </mat-tab-group>
+    <mat-paginator [pageSizeOptions]="[10, 20, 30, 40]" aria-label="Select page of users"></mat-paginator>
+</div>
