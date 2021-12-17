@@ -4,11 +4,9 @@ import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AppNavigationBar } from './navigation-bar/app.navigation-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSliderModule } from '@angular/material/slider';
 import { HttpClientModule } from '@angular/common/http';
-import { DataparserService } from './services/dataparser.service'
 
 import { ToolbarComponent } from './components//toolbar/toolbar.component';
 import { ItemtableComponent } from './components/itemtable/itemtable.component'
@@ -29,7 +27,7 @@ import {MatInputModule } from '@angular/material/input';
 import {MatPaginatorModule} from '@angular/material/paginator';
 
 // community mashup
-
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 
 
@@ -38,10 +36,8 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 @NgModule({
   declarations: [
     AppComponent,
-    AppNavigationBar,
-    DataparserService,
-    ToolbarComponent,
     ItemtableComponent,
+    ToolbarComponent,
   ],
   imports: [
     BrowserModule,
@@ -64,9 +60,10 @@ import {MatPaginatorModule} from '@angular/material/paginator';
     MatTableModule,
     MatInputModule,
     MatPaginatorModule,
+    MatAutocompleteModule,
     // mashup
   ],
   providers: [MatPaginatorModule],
-  bootstrap: [AppComponent,AppNavigationBar,DataparserService]
+  bootstrap: [AppComponent]
 })
 export class AppModule {}

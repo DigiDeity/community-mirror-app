@@ -7,14 +7,15 @@ import { CommunityMashupService } from './communitymashup/communitymashup.servic
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent implements OnInit {
+  
   title = 'community-mirror-app';
   
   constructor(private route: ActivatedRoute, public communitymashup: CommunityMashupService) {
   }
   ngOnInit() {
     this.communitymashup.loadFromUrl()
-    console.log("CommunityMashup Items: " + this.communitymashup.items);
   };  
 
 }

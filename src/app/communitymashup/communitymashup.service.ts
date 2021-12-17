@@ -11,6 +11,7 @@ import { Identifier } from './model/identifier.model';
 import { Tag } from './model/tag.model';
 import { Item } from './model/item.model';
 import { Image } from './model/image.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,8 @@ export class CommunityMashupService {
   public items: Array<any> = [];
 
   constructor(private http: HttpClient) { }
+
+  finishedLoadingFromURL: boolean = false;
 
   getPersons(metaTagString:string): Person[] | null{
     if (metaTagString == null) {
@@ -127,13 +130,21 @@ export class CommunityMashupService {
         })}
         return data;
       });
-
     return promise;
   }
 
 
   itemIdMap = new Map();
   itemTypeMap = new Map();
+
+  // itemMap
+  itemArray: Item[] = [];
+
+// observers
+  private itemIdMapObserver: BehaviorSubject<Map<string,Item>> = new BehaviorSubject<Map<string,Item>>(this.itemIdMap);
+  
+
+
 
   initializeDataSet() {
     // check if DataSet is already initialized ...
@@ -146,6 +157,7 @@ export class CommunityMashupService {
       var item = this.items[i]['$'];
       var itemIdent = item['ident'];
       var itemType = item['xsi:type'];
+      this.itemArray.push(new Item(item,this));
       switch (itemType) {
         case 'data:Person':
           item = new Person(item, this);
@@ -184,11 +196,23 @@ export class CommunityMashupService {
       }
       typeArr.push(item);
     }
+    this.finishedLoadingFromURL = true;
+    this.itemIdMapObserver.next(this.itemIdMap);
   }
 
-  getItems(): Array<Item> {
+
+  getItems(): Item[] {
     //console.log(this.items)
-    return this.items;
+    return this.itemTypeMap.get('data:Item');
+  }
+  getPersonsArray(): Person[]{
+    return this.itemTypeMap.get('data:Person');
+  }
+  getOrganisationsArray(): Organisation[]{
+    return this.itemTypeMap.get('data:Organisation');
+  }
+  getItemIdMapObserverable() {
+    return this.itemIdMapObserver.asObservable();
   }
 
 }
