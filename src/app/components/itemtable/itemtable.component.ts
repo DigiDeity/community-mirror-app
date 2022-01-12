@@ -2,14 +2,14 @@ import { Component, OnInit, ViewChild, AfterViewInit, Input  } from '@angular/co
 import {MatTable, MatTableDataSource} from '@angular/material/table';
 import {MatTabGroup, MatTabsModule} from '@angular/material/tabs';
 import { ActivatedRoute,  } from '@angular/router';
-import { Constants } from 'src/app/global/constants';
+import { Config } from 'src/app/configurations/config';
 import { CommunityMashupService } from 'src/app/communitymashup/communitymashup.service'
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatPaginator } from '@angular/material/paginator';
 import { Person } from 'src/app/communitymashup/model/person.model';
 import { Item } from 'src/app/communitymashup/model/item.model';
 import { Organisation } from 'src/app/communitymashup/model/organisation.model';
-
+import { MatAccordion } from '@angular/material/expansion';
 
 
 @Component({
@@ -31,6 +31,7 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
   @ViewChild(MatTable) table!: MatTable<any>;
   @ViewChild(MatTabGroup) tableGroup!: MatTabGroup;
   @ViewChild(Input) filterInput!: Input; 
+  @ViewChild(MatAccordion) accordion!: MatAccordion;
 
 
   // my data
@@ -41,21 +42,26 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
   displayedColumnsAll: string[] = ['ident'];
   displayedColumnsPerson: string[] = ['ident','name','title','lastname','firstname'];
   displayedColumnsOrg: string[] = ['ident','name',];
-
+  displayedColumnsTest: string[] = ['Ident'];
   dataSource = new MatTableDataSource(this.parsedData);
   dataSourcePersons = new MatTableDataSource(this.parserDataPersons)
   dataSourceOrganisations = new MatTableDataSource(this.parsedDataOrganisations)
   expandedElement: Item | null;
+  // selected item
+  selectedItem!: Item;
+
+
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
-    this.dataSourcePersons.filter = filterValue.trim().toLowerCase();
-    this.dataSourceOrganisations.filter = filterValue.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+      this.dataSourcePersons.filter = filterValue.trim().toLowerCase();
+      this.dataSourceOrganisations.filter = filterValue.trim().toLowerCase();
+  
+      if (this.dataSource.paginator) {
+        this.dataSource.paginator.firstPage();
+      }
   }
 
   applyFilterIcon() {
@@ -92,7 +98,7 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
       this.communityMirrorID= this.paramsObject.params.cmid;
     }
   );   
-    if (this.ident != Constants.ident) {
+    if (this.ident != Config.ident) {
       // filter for item
     }  
     this.communitymashup.getItemIdMapObserverable().subscribe(
@@ -104,11 +110,10 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
     if(this.communitymashup.finishedLoadingFromURL) {
       console.log("Start Mashup Data")
       const myDate = new Date().getTime();
-      this.dataSource.data = this.communitymashup.itemArray
+      this.dataSource.data = this.communitymashup.getItems();
       this.dataSourcePersons.data = this.communitymashup.getPersonsArray();
       this.dataSourceOrganisations.data = this.communitymashup.getOrganisationsArray();
 
-      console.warn(this.communitymashup.itemIdMap)
       // setup paginator
       this.tabClick()
       if(this.ident != undefined) {
@@ -132,10 +137,28 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
         break;
       case 0:
         this.dataSourcePersons.paginator = this.paginator;
+        this.dataSource.paginator = this.paginator;
         break;
       case 1:
         this.dataSourceOrganisations.paginator = this.paginator;
         break;
     } 
+  }
+
+  getSelectedMatTabIndex(): number {
+    if(this.tableGroup != undefined) {
+      if (this.tableGroup.selectedIndex != null){
+        return this.tableGroup.selectedIndex;
+      } else {
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  }
+
+  prepareSelectedItemForDownload(itemToDownload: Item) {
+    this.selectedItem = itemToDownload;
+    console.warn(this.selectedItem)
   }
 }

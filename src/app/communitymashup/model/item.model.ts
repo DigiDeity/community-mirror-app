@@ -69,4 +69,7 @@ export class Item {
     return result;
   }
 
+  getClassName(): string {
+    return this.constructor.name;
+  }
 }

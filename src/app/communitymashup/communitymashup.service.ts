@@ -12,6 +12,7 @@ import { Tag } from './model/tag.model';
 import { Item } from './model/item.model';
 import { Image } from './model/image.model';
 import { BehaviorSubject } from 'rxjs';
+import { Config } from '../configurations/config';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,7 @@ import { BehaviorSubject } from 'rxjs';
 
 export class CommunityMashupService {
 
-  sourceUrl: string = 'https://conf.communitymashup.net/xmlinf/mashup';
+  sourceUrl: string = Config.mashupURL;
 
   public created: any;
   public lastModified: any;
@@ -142,7 +143,7 @@ export class CommunityMashupService {
 
 // observers
   private itemIdMapObserver: BehaviorSubject<Map<string,Item>> = new BehaviorSubject<Map<string,Item>>(this.itemIdMap);
-  
+  itemGeneralArray: Item[] = [];
 
 
 
@@ -188,6 +189,7 @@ export class CommunityMashupService {
       // now store item object in different Maps for quick retrieval
       // a map indexing items by id
       this.itemIdMap.set(itemIdent, item);
+      this.itemGeneralArray.push(item);
       // a map storing item arrays for the different types
       var typeArr = this.itemTypeMap.get(itemType);
       if (typeArr == null) {
@@ -203,7 +205,8 @@ export class CommunityMashupService {
 
   getItems(): Item[] {
     //console.log(this.items)
-    return this.itemTypeMap.get('data:Item');
+    //return this.itemTypeMap.get('data:Item');
+    return this.itemGeneralArray;
   }
   getPersonsArray(): Person[]{
     return this.itemTypeMap.get('data:Person');

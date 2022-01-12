@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Constants } from 'src/app/global/constants'
 import { ActivatedRoute} from '@angular/router';
+import { Config } from 'src/app/configurations/config';
 
 @Component({
   selector: 'app-toolbar',
@@ -9,9 +9,9 @@ import { ActivatedRoute} from '@angular/router';
 })
 export class ToolbarComponent implements OnInit {
   paramsObject: any;
-  communityMirrorID: string = Constants.communityMirrorId;
-  ident: string = Constants.ident;
-  appTitle: string = Constants.appTitle;
+  communityMirrorID: string = Config.communityMirrorId;
+  ident: string = Config.ident;
+  appTitle: string = Config.appTitle;
   
   constructor(private route: ActivatedRoute){ }
 
