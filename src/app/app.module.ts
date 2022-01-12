@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+import {trigger,state,style,animate,transition}from '@angular/animations';
 import { MatSliderModule } from '@angular/material/slider';
 import { HttpClientModule } from '@angular/common/http';
 
@@ -30,11 +32,8 @@ import {MatExpansionModule } from '@angular/material/expansion';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
 // ics generator 
-
+import { NgxVcardModule } from 'ngx-vcard';
 //
-
-
-
 
 @NgModule({
   declarations: [
@@ -43,7 +42,8 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     ToolbarComponent,
   ],
   imports: [
-    BrowserModule,
+    //BrowserModule,
+    NgxVcardModule,
     FormsModule,
     ReactiveFormsModule,
     AppRoutingModule,
