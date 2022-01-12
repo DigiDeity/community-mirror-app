@@ -5,11 +5,63 @@
 <div class="app-container"> 
     <mat-form-field class="search-filter" appearance="legacy">
         <mat-label>Search</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Examlpe input" #input width="100%" value={{ident}} id="filterinput">
+        <input matInput (keyup)="applyFilter($event)" placeholder="Filter" #input value={{ident}} id="filterinput">
         <mat-icon matSuffix (click)="applyFilterIcon()">search</mat-icon>
         <!-- <mat-hint>Search for Community Mirror items</mat-hint> -->
     </mat-form-field>
-    <mat-tab-group (selectedTabChange)="tabClick()" mat-align-tabs="center" >
+    <mat-tab-group (selectedTabChange)="tabClick()" mat-align-tabs="center">
+        <!-- Tab for Person Items -->
+        <mat-tab label="Personen"> 
+            <mat-table mat-table
+                [dataSource]="dataSource" multiTemplateDataRows
+                class="mat-elevation-z8">
+                <ng-container matColumnDef="Ident">
+                    <mat-header-cell *matHeaderCellDef>ident</mat-header-cell>
+                    <mat-cell *matCellDef="let element" >
+                        <!--<mat-accordion class="expandable-list-entry" >-->
+                            <mat-expansion-panel class="expandable-list-entry" [ngSwitch]="element.constructor.name">
+                                <mat-expansion-panel-header>
+                                <mat-panel-title> {{element.ident}} </mat-panel-title>
+                                <mat-panel-description class="expandable-list-entry-description">
+                                    <span *ngSwitchCase="'Item'">Item: {{element.stringValue}}</span>
+                                    <span *ngSwitchCase='"Person"'>Person: {{element.lastname}}</span>
+                                    <span *ngSwitchDefault>Default for: {{element.getClassName()}}</span>
+                                </mat-panel-description>
+                                </mat-expansion-panel-header>
+                                <div class="container" appearance="fill" >
+                                    <span> Date of Birth: {{element.dateOfBirth}}</span>
+                                    <tr></tr>
+                                    <span *ngFor="let ref of element.alternativeNames">Alternative Names: {{ref}}</span>
+                                    <tr></tr>
+                                    <span *ngFor="let ref of element.connectedTo">Connected to: {{ref}}</span>
+                                    <tr></tr>
+                                    <span> URI: {{element.uri}}</span>
+                                    <tr></tr>
+                                    <span> String Value: {{element.stringValue}} </span>
+                                    <tr></tr>
+                                    <span> Created: {{element.created}} </span>
+                                    <tr></tr>
+                                    <span> Last Modified: {{element.lastModified}} </span>
+                                    <tr></tr>
+                                    <span *ngFor="let ref of element.connectedTo">Connected to: {{ref}}</span>
+                                    <tr></tr>
+                                    <span *ngFor="let ref of element.identifierdBy">identifiedBy: {{ref}}</span>
+                                    <tr></tr>
+                                    <span *ngFor="let ref of element.metaTags">metaTags: {{ref}}</span>
+                                    <tr class ="example-fill-remaining-space"></tr>
+                                    <button class="itemtable-download-button" (click)="prepareSelectedItemForDownload(element)"  mat-mini-fab color="warn" aria-label="Example icon button with a menu icon">
+                                        <mat-icon>arrow_right</mat-icon>
+                                    </button>
+                                </div>
+                            </mat-expansion-panel>
+                        <!-- </mat-accordion> -->
+                    </mat-cell>
+                </ng-container>
+                <mat-header-row *matHeaderRowDef="displayedColumnsTest"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: displayedColumnsTest;"></mat-row>
+                
+            </mat-table>
+        </mat-tab>
         <!-- Tab for Peron Items -->
         <mat-tab label="Persons"> 
             <table mat-table
@@ -144,6 +196,10 @@
                 
             </table>
         </mat-tab>
+            <!-- Tab for Downloading -->
+            <mat-tab label="Download">
+                <mat-icon>download</mat-icon>
+            </mat-tab>
     </mat-tab-group>
-    <mat-paginator [pageSizeOptions]="[10, 20, 30, 40]" aria-label="Select page of users"></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[10, 20, 30, 40]" aria-label="Select page of users" ></mat-paginator>
 </div>

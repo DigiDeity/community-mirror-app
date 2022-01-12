@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -25,10 +25,13 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatTableModule} from '@angular/material/table';
 import {MatInputModule } from '@angular/material/input';
 import {MatPaginatorModule} from '@angular/material/paginator';
-
-// community mashup
+import {MatSelectModule} from '@angular/material/select';
+import {MatExpansionModule } from '@angular/material/expansion';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 
+// ics generator 
+
+//
 
 
 
@@ -42,6 +45,7 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     MatSliderModule,
@@ -61,7 +65,8 @@ import {MatAutocompleteModule} from '@angular/material/autocomplete';
     MatInputModule,
     MatPaginatorModule,
     MatAutocompleteModule,
-    // mashup
+    MatSelectModule,
+    MatExpansionModule
   ],
   providers: [MatPaginatorModule],
   bootstrap: [AppComponent]
