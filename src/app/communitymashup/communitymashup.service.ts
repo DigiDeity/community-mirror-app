@@ -12,7 +12,8 @@ import { Tag } from './model/tag.model';
 import { Item } from './model/item.model';
 import { Image } from './model/image.model';
 import { BehaviorSubject } from 'rxjs';
-import { Config } from '../configurations/config';
+import { ConfigurationService } from '../services/configuration/configuration.service';
+import { type } from 'os';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ import { Config } from '../configurations/config';
 
 export class CommunityMashupService {
 
-  sourceUrl: string = Config.mashupURL;
+  sourceUrl: string = ConfigurationService.mashupURL;
 
   public created: any;
   public lastModified: any;
@@ -117,8 +118,7 @@ export class CommunityMashupService {
     let url = this.sourceUrl;
     const promise = this.http.get(url, {
       responseType: 'text'
-    })
-      .toPromise()
+    }).toPromise()
       .then(data => {
         console.log('Loading dataset from ' + url);
         if(data) {
@@ -200,6 +200,7 @@ export class CommunityMashupService {
     }
     this.finishedLoadingFromURL = true;
     this.itemIdMapObserver.next(this.itemIdMap);
+    
   }
 
 
@@ -214,8 +215,95 @@ export class CommunityMashupService {
   getOrganisationsArray(): Organisation[]{
     return this.itemTypeMap.get('data:Organisation');
   }
+  getContentArray(): Content[]{
+    return this.itemTypeMap.get('data:Content');
+  }
   getItemIdMapObserverable() {
     return this.itemIdMapObserver.asObservable();
   }
+
+  addTestItems() {
+  // Item
+  var dummyItem = this.itemGeneralArray[this.itemGeneralArray.length-1];
+  dummyItem.ident = "a_TestItem" 
+  dummyItem.uri = "https://www.unibw.de/inf2"
+  dummyItem.stringValue = "This is an Item."
+  dummyItem.created = "2022-01-09T00:30:34.934+0100";
+  dummyItem.lastModified = "2022-01-09T00:30:34.934+0100";
+  dummyItem.connectedTo = ["a_2","a_3","a_4"]
+  dummyItem.identifiedBy = ["a_5","a_6","a_7"]
+  dummyItem.metaTags = ["a_8","a_9","a_10"]
+  // Person
+  var dummyPerson = new Person(this.itemGeneralArray.length-1, this);
+  dummyPerson.ident = "a_TestPerson"
+  dummyPerson.title = "Von" 
+  dummyPerson.lastname = "Mustermann"
+  dummyPerson.firstname = "Max"
+  dummyPerson.dateOfBirth = "01.01.2000"
+  dummyPerson.stringValue = "This is a Person."
+  dummyPerson.uri = "https://www.unibw.de/inf2"
+  dummyPerson.connectedTo = ["a_2","a_3","a_4"]
+  dummyPerson.identifiedBy = ["a_5","a_6","a_7"]
+  dummyPerson.metaTags = ["a_8","a_9","a_10"]
+  dummyPerson.created = "2022-01-09T00:30:34.934+0100";
+  dummyPerson.lastModified = "2022-01-09T00:30:34.934+0100";
+  dummyPerson.images = ["test_Person"]
+  // Organisation
+  var dummyOrg = new Organisation(this.itemGeneralArray.length-1,this);
+  dummyOrg.ident = "a_TestOrg"
+  dummyOrg.name = "Test Organisation"
+  dummyOrg.alternativeNames = ["Alias 1","Alias 2"]
+  dummyOrg.stringValue = "This is an Organisation."
+  dummyOrg.uri = "https://www.unibw.de/inf2"
+  dummyOrg.connectedTo = ["a_2","a_3","a_4"]
+  dummyOrg.identifiedBy = ["a_5","a_6","a_7"]
+  dummyOrg.metaTags = ["a_8","a_9","a_10"]
+  dummyOrg.created = "2022-01-09T00:30:34.934+0100";
+  dummyOrg.lastModified = "2022-01-09T00:30:34.934+0100";
+  dummyOrg.images = ["test_Organisation1","test_Organisation2", "test_Organisation3" ]
+  // Content
+  var dummyContent = new Content(this.itemGeneralArray.length-1,this)
+  dummyContent.ident = "a_TestContent"
+  dummyContent.locale = "Locale."
+  dummyContent.name = "Test Content"
+  dummyContent.alternativeNames = ["Alias 3", "Alias 4"]
+  dummyContent.uri = "https://www.unibw.de/inf2"
+  dummyContent.connectedTo = ["a_2","a_3","a_4"]
+  dummyContent.identifiedBy = ["a_5","a_6","a_7"]
+  dummyContent.metaTags = ["a_8","a_9","a_10"]
+  dummyContent.created = "2022-01-09T00:30:34.934+0100";
+  dummyContent.lastModified = "2022-01-09T00:30:34.934+0100";
+  dummyContent.images = ["test_Content1", "test_Content2"]
+  // images
+  var dummyImage = new Image(this.itemGeneralArray.length-1,this);
+  dummyImage.ident = "test_Person"
+  dummyImage.fileUrl = "https://www.pngitem.com/pimgs/m/111-1114669_blank-person-hd-png-download.png"
+  this.itemIdMap.set(dummyImage.ident, dummyImage)
+  var dummyImage = new Image(this.itemGeneralArray.length-1,this);
+  dummyImage.ident = "test_Organisation1"
+  dummyImage.fileUrl = "https://de.academic.ru/pictures/dewiki/83/Signet_unibw.jpg"
+  this.itemIdMap.set(dummyImage.ident, dummyImage)
+  var dummyImage = new Image(this.itemGeneralArray.length-1,this);
+  dummyImage.ident = "test_Organisation2"
+  dummyImage.fileUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/GitHub_logo_2013.svg/250px-GitHub_logo_2013.svg.png"
+  this.itemIdMap.set(dummyImage.ident, dummyImage)
+  var dummyImage = new Image(this.itemGeneralArray.length-1,this);
+  dummyImage.ident = "test_Organisation3"
+  dummyImage.fileUrl = "https://de.wikipedia.org/wiki/Wikipedia:Hauptseite#/media/Datei:Sir_William_Petre_from_NPG.jpg"
+  this.itemIdMap.set(dummyImage.ident, dummyImage)
+  var dummyImage = new Image(this.itemGeneralArray.length-1,this);
+  dummyImage.ident = "test_Content1"
+  dummyImage.fileUrl = "https://www.stateofdigitalpublishing.com/wp-content/uploads/2018/10/content.jpg"
+  this.itemIdMap.set(dummyImage.ident, dummyImage)
+  var dummyImage = new Image(this.itemGeneralArray.length-1,this);
+  dummyImage.ident = "test_Content2"
+  dummyImage.fileUrl = "http://blog.sqzin.com/wp-content/uploads/2018/01/content.jpg"
+  this.itemIdMap.set(dummyImage.ident, dummyImage)
+
+  this.itemGeneralArray.push(dummyItem);
+  this.itemTypeMap.get('data:Person').push(dummyPerson);
+  this.itemTypeMap.get('data:Organisation').push(dummyOrg);
+  this.itemTypeMap.get('data:Content').push(dummyContent)
+}
 
 }
