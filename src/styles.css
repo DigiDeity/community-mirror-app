@@ -48,3 +48,18 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     justify-content: space-between;
     align-items: center;
 }
+.ng-container {
+    width: auto;
+}
+.mat-tab{
+    width: 100%;
+    max-width: 100%;
+    background-color: orange;
+}
+.table-head{
+    background-color: orange;
+    font: bold;
+}
+
+
+

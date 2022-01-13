@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute} from '@angular/router';
-import { Config } from 'src/app/configurations/config';
+import { Config } from 'src/app/services/configuration/configuration.service';
 
 @Component({
   selector: 'app-toolbar',

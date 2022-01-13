@@ -1,21 +1,30 @@
+/**
+ * Required imports for the class
+ */
+// Angular imports
 import { Component, OnInit, ViewChild, AfterViewInit, Input } from '@angular/core';
+import { ActivatedRoute, } from '@angular/router';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+// Angular Material imports
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatTabGroup, MatTabsModule } from '@angular/material/tabs';
-import { ActivatedRoute, } from '@angular/router';
-import { Config } from 'src/app/configurations/config';
-import { CommunityMashupService } from 'src/app/communitymashup/communitymashup.service'
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatPaginator } from '@angular/material/paginator';
+import { MatAccordion } from '@angular/material/expansion';
+import { MatSnackBar } from '@angular/material/snack-bar';
+// configuration import
+import { Config } from 'src/app/services/configuration/configuration.service';
+
+import { CommunityMashupService } from 'src/app/communitymashup/communitymashup.service';
 import { Person } from 'src/app/communitymashup/model/person.model';
 import { Item } from 'src/app/communitymashup/model/item.model';
 import { Organisation } from 'src/app/communitymashup/model/organisation.model';
-import { MatAccordion } from '@angular/material/expansion';
-import { Img, PdfMakeWrapper } from 'pdfmake-wrapper';
-import * as pdfFonts from "pdfmake/build/vfs_fonts"; // fonts provided for pdfmake
 import { InformationObject } from 'src/app/communitymashup/model/informationobject.model';
+import { Content } from 'src/app/communitymashup/model/content.model';
 
-// If any issue using previous fonts import. you can try this:
-// import pdfFonts from "pdfmake/build/vfs_fonts";
+import { Cell, Img, PdfMakeWrapper, Table, Txt } from 'pdfmake-wrapper';
+import * as pdfFonts from "pdfmake/build/vfs_fonts"; // fonts provided for pdfmake
+
+import { VCard, VCardEncoding, VCardFormatter } from 'ngx-vcard';
 
 // Set the fonts to use
 PdfMakeWrapper.setFonts(pdfFonts);
@@ -46,14 +55,17 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
   parsedData: Item[] = [];
   parserDataPersons: Person[] = [];
   parsedDataOrganisations: Organisation[] = [];
+  parsedDataContent: Content[] = [];
   // table variables
   displayedColumnsAll: string[] = ['ident'];
-  displayedColumnsPerson: string[] = ['ident', 'name', 'title', 'lastname', 'firstname'];
+  displayedColumnsPerson: string[] = ['ident', 'lastname', 'firstname'];
   displayedColumnsOrg: string[] = ['ident', 'name',];
+  displayedColumnsContent: string[] = ['ident', 'name',];
   displayedColumnsTest: string[] = ['Ident'];
   dataSource = new MatTableDataSource(this.parsedData);
   dataSourcePersons = new MatTableDataSource(this.parserDataPersons)
   dataSourceOrganisations = new MatTableDataSource(this.parsedDataOrganisations)
+  dataSourceContent = new MatTableDataSource(this.parsedDataContent)
   expandedElement: Item | null;
   // selected item
   selectedItem!: Item;
@@ -89,10 +101,17 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
   paramsObject: any;
   communityMirrorID: string = "";
   ident: string = "";
+  // vCard
+  public vCardEncoding: typeof VCardEncoding = VCardEncoding;
+  public vCard: VCard = { name: { firstNames: 'John', lastNames: 'Doe' } };
+  public generateVCardOnTheFly(person: Person): VCard {
+    console.log("vcard")
+    return {
+      name: { firstNames: person.firstname, lastNames: person.lastname, addtionalNames: person.title },
+    };
+  };
 
-
-
-  constructor(private route: ActivatedRoute, public communitymashup: CommunityMashupService) {
+  constructor(private route: ActivatedRoute, public communitymashup: CommunityMashupService, private _snackBar: MatSnackBar) {
     // table
     this.expandedElement = null;
   }
@@ -121,6 +140,7 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
       this.dataSource.data = this.communitymashup.getItems();
       this.dataSourcePersons.data = this.communitymashup.getPersonsArray();
       this.dataSourceOrganisations.data = this.communitymashup.getOrganisationsArray();
+      this.dataSourceContent.data = this.communitymashup.getContentArray();
 
       // setup paginator
       this.tabClick()
@@ -128,6 +148,7 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
         this.dataSource.filter = this.ident.toLowerCase();
         this.dataSourceOrganisations.filter = this.ident.toLowerCase();
         this.dataSourcePersons.filter = this.ident.toLowerCase();
+        this.dataSourceContent.filter = this.ident.toLocaleLowerCase();
       }
 
       // reset variable
@@ -140,7 +161,7 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
   tabClick() {
     this.paginator.pageIndex = 0;
     switch (this.tableGroup.selectedIndex) {
-      case 2:
+      case 3:
         this.dataSource.paginator = this.paginator;
         break;
       case 0:
@@ -149,6 +170,11 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
         break;
       case 1:
         this.dataSourceOrganisations.paginator = this.paginator;
+        this.dataSource.paginator = this.paginator;
+        break;
+      case 2:
+        this.dataSourceContent.paginator = this.paginator;
+        this.dataSource.paginator = this.paginator;
         break;
     }
   }
@@ -175,8 +201,13 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
 
   // generate pdf for InformationObject
   async generatePdfFileToDownload(informationObjectToDownload: InformationObject) {
+    this._snackBar.open("Creating PDF to download.", '', {duration: Config.snackbarDuration});
     // item attributes
     const pdf = new PdfMakeWrapper();
+    console.log(informationObjectToDownload);
+    const fileNameDummy = informationObjectToDownload.name + '-' + informationObjectToDownload.ident;
+    var imageCounter = 0;
+    this.dataServiceProcessed = false;
     pdf.add("Ident: " + informationObjectToDownload.ident);
     pdf.add("URI: " + informationObjectToDownload.uri);
     pdf.add("String Value: " + informationObjectToDownload.stringValue);
@@ -193,15 +224,47 @@ export class ItemtableComponent implements OnInit, AfterViewInit {
     informationObjectToDownload.metaInformations.forEach((metaInformation: string) => pdf.add("Meta Information: " + metaInformation));
     informationObjectToDownload.categories.forEach((category: string) => pdf.add("Belongs to Category: " + category));
     informationObjectToDownload.tags.forEach((tag: string) => pdf.add("Tag: " + tag));
-    informationObjectToDownload.images.forEach(async (image: string) =>
-      await new Img(this.communitymashup.itemIdMap.get(image).fileUrl).build().then(
-        img => { pdf.add(img) }));
     informationObjectToDownload.binaries.forEach((binary: string) => pdf.add("Binary: " + binary));
-    //pdf.add(await new Img("https://www.npmjs.com/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci83M2UzMDJlZTBhMjNkMDQ3NWZjZjBhYjMwYmI0NzdkZj9zaXplPTEwMCZkZWZhdWx0PXJldHJvIn0.7W3BgYOOANXBYGAlvylKBUR_NurUv5ITW6sk0an8YTg").build())
-    // create and download pdf
-    pdf.create().download(informationObjectToDownload.name + '-' + informationObjectToDownload.ident);
-
-
-
+    if(informationObjectToDownload.images.length > 0) {
+      informationObjectToDownload.images.forEach(async (image: string) => {
+        imageCounter += 1;
+        await new Img(this.communitymashup.itemIdMap.get(image).fileUrl).build().then(img => { pdf.add(img);
+          imageCounter --;
+          if(imageCounter == 0) {
+            this.downloadPDF(pdf,fileNameDummy)
+          }
+          console.log(imageCounter)
+        }).catch((error) => { this._snackBar.open(Config.couldNotLoadImage, 'OK', {duration: Config.snackbarDuration})
+          imageCounter--;
+          if(imageCounter == 0) {
+            this.downloadPDF(pdf,fileNameDummy)
+          }
+          console.log(imageCounter)
+          })});
+    }
   }
+
+    // generate pdf for InformationObject
+    generatePdfFileToDownloadItem(itemObject: Item) {
+      this._snackBar.open("Creating PDF to download.", '', {duration: Config.snackbarDuration});
+      // item attributes
+      const pdf = new PdfMakeWrapper();
+      this.dataServiceProcessed = false;
+      pdf.add("Ident: " + itemObject.ident);
+      pdf.add("URI: " + itemObject.uri);
+      pdf.add("String Value: " + itemObject.stringValue);
+      pdf.add("Created: " + itemObject.created);
+      pdf.add("Last modified: " + itemObject.lastModified);
+      // references - store idents
+      itemObject.connectedTo.forEach((connection: string) => pdf.add("Connected to: " + connection));
+      itemObject.identifiedBy.forEach((identification: string) => pdf.add("Identified by: " + identification));
+      itemObject.metaTags.forEach((metatag: string) => pdf.add("Meta Tag: " + metatag));
+      this.downloadPDF(pdf,itemObject.ident)
+    }
+    // function to create and download the written PDF File
+    // 
+    private downloadPDF(pdf: PdfMakeWrapper, fileName: string) {
+      this.dataServiceProcessed = true;
+      pdf.create().download(fileName);
+    }
 }
